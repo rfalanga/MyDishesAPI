@@ -33,6 +33,14 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 });
 
+// recreate & migrate the database on each run, for demo purposes
+using (var serviceScope = app.Services.GetService<IServiceScopeFactory>()?.CreateScope())
+{
+    var context = serviceScope?.ServiceProvider.GetRequiredService<MyDishesDbContext>();
+    context?.Database.EnsureDeleted();
+    context?.Database.Migrate();
+}
+
 app.Run();
 
 internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
