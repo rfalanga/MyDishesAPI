@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-        SOLUTION_LOCATION: MyDishesAPI.sln
+        SOLUTION_LOCATION: MyDishesAPI/MyDishesAPI.sln
 
     steps:
     - uses: actions/checkout@v4
