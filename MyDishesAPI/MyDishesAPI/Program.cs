@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MyDishesAPI.DbContexts;
+using MyDishesAPI.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,7 @@ app.MapGet("/dishes", async (MyDishesDbContext db) =>
 
 app.MapGet("/dishes/{dishId}", async (Guid dishId, MyDishesDbContext db) =>
 {
-    return await db.Dishes.FindAsync(dishId)
+    return await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId)
         is Dish dish
             ? Results.Ok(dish)
             : Results.NotFound();
