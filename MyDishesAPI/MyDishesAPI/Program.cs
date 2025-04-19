@@ -15,9 +15,9 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/dishes", (MyDishesDbContext db) =>
+app.MapGet("/dishes", async (MyDishesDbContext db) =>
 {
-    return db.Dishes;
+    return await db.Dishes.ToListAsync();
 });
 
 // recreate & migrate the database on each run, for demo purposes
