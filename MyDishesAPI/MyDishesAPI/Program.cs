@@ -21,7 +21,7 @@ app.MapGet("/dishes", async (MyDishesDbContext db) =>
     return await db.Dishes.ToListAsync();
 });
 
-app.MapGet("/dishes/{dishId}", async (Guid dishId, MyDishesDbContext db) =>
+app.MapGet("/dishes/{dishId}", async (MyDishesDbContext db, Guid dishId) =>
 {
     return await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId)
         is Dish dish
