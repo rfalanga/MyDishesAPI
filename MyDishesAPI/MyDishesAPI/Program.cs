@@ -27,10 +27,10 @@ app.MapGet("/dishes", async (MyDishesDbContext db) =>
 
 app.MapGet("/dishes/{dishId:guid}", async (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
 {
-    return mapper<DishDTO>(await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId)
-        is Dish dish
-            ? Results.Ok(dish)
-            : Results.NotFound());
+    var dish = await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
+    return dish is not null
+        ? Results.Ok(mapper.Map<DishDTO>(dish))
+        : Results.NotFound();
 });
 
 app.MapGet("/dishes/{dishId}/ingredients", async (MyDishesDbContext db, Guid dishId) =>
