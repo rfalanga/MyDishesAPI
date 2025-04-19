@@ -36,6 +36,14 @@ app.MapGet("/dishes/{dishId}/ingredients", async (MyDishesDbContext db, Guid dis
         .FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients;    // Note: this can result in an infinite loop, which will resolved later.
 });
 
+app.MapGet("/dishes/{dishName}", async (MyDishesDbContext db, string dishName) =>
+{
+    return await db.Dishes.FirstOrDefaultAsync(d => d.Name == dishName)
+        is Dish dish
+            ? Results.Ok(dish)
+            : Results.NotFound();
+});
+
 // recreate & migrate the database on each run, for demo purposes
 using (var serviceScope = app.Services.GetService<IServiceScopeFactory>()?.CreateScope())
 {
