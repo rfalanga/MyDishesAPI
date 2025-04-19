@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MyDishesAPI.DbContexts;
 using MyDishesAPI.Entities;
 using MyDishesAPI.Models;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,8 +23,10 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 // Because there is no querystring parameter with the name "name", we don't have to put FromQuery here. Removed [FromQuery].
-app.MapGet("/dishes", async (MyDishesDbContext db, IMapper mapper, string? name) =>
+app.MapGet("/dishes", async (MyDishesDbContext db, ClaimsPrincipal claimsPrincipal, IMapper mapper, string? name) =>
 {
+    Console.WriteLine($"User: {claimsPrincipal.Identity?.IsAuthenticated}");
+
     return mapper.Map<IEnumerable<DishDTO>>(await db.Dishes
         .Where(d => name == null || d.Name.Contains(name))
         .ToListAsync());
