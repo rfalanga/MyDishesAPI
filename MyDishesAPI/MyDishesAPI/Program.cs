@@ -15,9 +15,9 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/dishes", async (MyDishesDbContext db) =>
+app.MapGet("/dishes", (MyDishesDbContext db) =>
 {
-    return await db.Dishes;
+    return db.Dishes;
 });
 
 app.Run();
