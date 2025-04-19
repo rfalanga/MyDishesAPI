@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyDishesAPI.DbContexts;
 using MyDishesAPI.Entities;
@@ -20,7 +21,7 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/dishes", async (MyDishesDbContext db, IMapper mapper) =>
+app.MapGet("/dishes", async (MyDishesDbContext db, IMapper mapper, [FromQuery] string? name) =>
 {
     return mapper.Map<IEnumerable<DishDTO>>(await db.Dishes.ToListAsync());
 });
