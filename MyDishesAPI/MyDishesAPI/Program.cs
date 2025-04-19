@@ -23,7 +23,9 @@ app.UseHttpsRedirection();
 
 app.MapGet("/dishes", async (MyDishesDbContext db, IMapper mapper, [FromQuery] string? name) =>
 {
-    return mapper.Map<IEnumerable<DishDTO>>(await db.Dishes.ToListAsync());
+    return mapper.Map<IEnumerable<DishDTO>>(await db.Dishes
+        .Where(d => name == null || d.Name.Contains(name))
+        .ToListAsync());
 });
 
 app.MapGet("/dishes/{dishId:guid}", async (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
