@@ -31,9 +31,9 @@ app.MapGet("/dishes/{dishId}", async (MyDishesDbContext db, Guid dishId) =>
 
 app.MapGet("/dishes/{dishId}/ingredients", async (MyDishesDbContext db, Guid dishId) =>
 {
-    return await db.Ingredients
-        .Where(i => i.DishId == dishId)
-        .ToListAsync();
+    return (await db.Dishes
+        .Include(d => d.Ingredients)
+        .FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients;
 });
 
 // recreate & migrate the database on each run, for demo purposes
