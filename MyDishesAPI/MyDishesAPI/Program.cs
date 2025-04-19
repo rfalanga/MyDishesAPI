@@ -1,6 +1,8 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MyDishesAPI.DbContexts;
 using MyDishesAPI.Entities;
+using MyDishesAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,12 +25,12 @@ app.MapGet("/dishes", async (MyDishesDbContext db) =>
     return await db.Dishes.ToListAsync();
 });
 
-app.MapGet("/dishes/{dishId:guid}", async (MyDishesDbContext db, Guid dishId) =>
+app.MapGet("/dishes/{dishId:guid}", async (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
 {
-    return await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId)
+    return mapper<DishDTO>(await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId)
         is Dish dish
             ? Results.Ok(dish)
-            : Results.NotFound();
+            : Results.NotFound());
 });
 
 app.MapGet("/dishes/{dishId}/ingredients", async (MyDishesDbContext db, Guid dishId) =>
