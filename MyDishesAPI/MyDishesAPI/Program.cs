@@ -21,7 +21,7 @@ app.MapGet("/dishes", async (MyDishesDbContext db) =>
     return await db.Dishes.ToListAsync();
 });
 
-app.MapGet("/dishes/{dishId}", async (MyDishesDbContext db, Guid dishId) =>
+app.MapGet("/dishes/{dishId:guid}", async (MyDishesDbContext db, Guid dishId) =>
 {
     return await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId)
         is Dish dish
@@ -36,7 +36,7 @@ app.MapGet("/dishes/{dishId}/ingredients", async (MyDishesDbContext db, Guid dis
         .FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients;    // Note: this can result in an infinite loop, which will resolved later.
 });
 
-app.MapGet("/dishes/{dishName}", async (MyDishesDbContext db, string dishName) =>
+app.MapGet("/dishes/{dishName:string}", async (MyDishesDbContext db, string dishName) =>
 {
     return await db.Dishes.FirstOrDefaultAsync(d => d.Name == dishName)
         is Dish dish
