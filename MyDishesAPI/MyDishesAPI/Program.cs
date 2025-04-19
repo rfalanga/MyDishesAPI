@@ -33,7 +33,7 @@ app.MapGet("/dishes/{dishId}/ingredients", async (MyDishesDbContext db, Guid dis
 {
     return (await db.Dishes
         .Include(d => d.Ingredients)
-        .FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients;
+        .FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients;    // Note: this can result in an infinite loop, which will resolved later.
 });
 
 // recreate & migrate the database on each run, for demo purposes
