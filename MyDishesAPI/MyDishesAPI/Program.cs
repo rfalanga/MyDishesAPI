@@ -20,9 +20,9 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/dishes", async (MyDishesDbContext db) =>
+app.MapGet("/dishes", async (MyDishesDbContext db, IMapper mapper) =>
 {
-    return await db.Dishes.ToListAsync();
+    return mapper.Map<IEnumerable<DishDTO>>(await db.Dishes.ToListAsync());
 });
 
 app.MapGet("/dishes/{dishId:guid}", async (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
@@ -33,19 +33,19 @@ app.MapGet("/dishes/{dishId:guid}", async (MyDishesDbContext db, IMapper mapper,
         : Results.NotFound();
 });
 
-app.MapGet("/dishes/{dishId}/ingredients", async (MyDishesDbContext db, Guid dishId) =>
+app.MapGet("/dishes/{dishId}/ingredients", async (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
 {
-    return (await db.Dishes
+    return mapper.Map<IEnumerable<IngredientDTO>> ((await db.Dishes
         .Include(d => d.Ingredients)
-        .FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients;    // Note: this can result in an infinite loop, which will resolved later.
+        .FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients);
 });
 
-app.MapGet("/dishes/{dishName:string}", async (MyDishesDbContext db, string dishName) =>
+app.MapGet("/dishes/{dishName:string}", async (MyDishesDbContext db, IMapper mapper, string dishName) =>
 {
-    return await db.Dishes.FirstOrDefaultAsync(d => d.Name == dishName)
+    return mapper.Map<DishDTO> (await db.Dishes.FirstOrDefaultAsync(d => d.Name == dishName)
         is Dish dish
             ? Results.Ok(dish)
-            : Results.NotFound();
+            : Results.NotFound());
 });
 
 // recreate & migrate the database on each run, for demo purposes
