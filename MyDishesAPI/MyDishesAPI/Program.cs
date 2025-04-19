@@ -21,7 +21,8 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/dishes", async (MyDishesDbContext db, IMapper mapper, [FromQuery] string? name) =>
+// Because there is no querystring parameter with the name "name", we don't have to put FromQuery here. Removed [FromQuery].
+app.MapGet("/dishes", async (MyDishesDbContext db, IMapper mapper, string? name) =>
 {
     return mapper.Map<IEnumerable<DishDTO>>(await db.Dishes
         .Where(d => name == null || d.Name.Contains(name))
