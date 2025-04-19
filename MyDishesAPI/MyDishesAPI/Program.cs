@@ -29,6 +29,13 @@ app.MapGet("/dishes/{dishId}", async (MyDishesDbContext db, Guid dishId) =>
             : Results.NotFound();
 });
 
+app.MapGet("/dishes/{dishId}/ingredients", async (MyDishesDbContext db, Guid dishId) =>
+{
+    return await db.Ingredients
+        .Where(i => i.DishId == dishId)
+        .ToListAsync();
+});
+
 // recreate & migrate the database on each run, for demo purposes
 using (var serviceScope = app.Services.GetService<IServiceScopeFactory>()?.CreateScope())
 {
