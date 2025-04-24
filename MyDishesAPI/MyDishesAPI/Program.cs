@@ -27,9 +27,9 @@ app.MapGet("/dishes", async (MyDishesDbContext db, ClaimsPrincipal claimsPrincip
 {
     Console.WriteLine($"User: {claimsPrincipal.Identity?.IsAuthenticated}");
 
-    return mapper.Map<IEnumerable<DishDTO>>(await db.Dishes
+    return TypedResults.Ok(mapper.Map<IEnumerable<DishDTO>>(await db.Dishes
         .Where(d => name == null || d.Name.Contains(name))
-        .ToListAsync());
+        .ToListAsync()));
 });
 
 app.MapGet("/dishes/{dishId:guid}", async (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
@@ -51,8 +51,8 @@ app.MapGet("/dishes/{dishName:string}", async (MyDishesDbContext db, IMapper map
 {
     return mapper.Map<DishDTO> (await db.Dishes.FirstOrDefaultAsync(d => d.Name == dishName)
         is Dish dish
-            ? Results.Ok(dish)
-            : Results.NotFound());
+            ? TypedResults.Ok(dish) // Can use TypedResults here, because we have a DTO for the dish name.
+            : Results.NotFound());  // Cannot use TypedResults here, because we don't have a DTO for the dish name.
 });
 
 // recreate & migrate the database on each run, for demo purposes
