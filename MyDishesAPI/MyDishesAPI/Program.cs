@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container
 
 // register the DbContext on the container, getting the connection string from appsettings.json
 builder.Services.AddDbContext<MyDishesDbContext>(options =>
