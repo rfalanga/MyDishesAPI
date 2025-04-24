@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyDishesAPI.DbContexts;
@@ -23,7 +24,7 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 // Because there is no querystring parameter with the name "name", we don't have to put FromQuery here. Removed [FromQuery].
-app.MapGet("/dishes", async (MyDishesDbContext db, ClaimsPrincipal claimsPrincipal, IMapper mapper, string? name) =>
+app.MapGet("/dishes", async Task<Ok<IEnumerable<DishDTO>>>(MyDishesDbContext db, ClaimsPrincipal claimsPrincipal, IMapper mapper, string? name) =>
 {
     Console.WriteLine($"User: {claimsPrincipal.Identity?.IsAuthenticated}");
 
@@ -32,12 +33,12 @@ app.MapGet("/dishes", async (MyDishesDbContext db, ClaimsPrincipal claimsPrincip
         .ToListAsync()));
 });
 
-app.MapGet("/dishes/{dishId:guid}", async (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
+app.MapGet("/dishes/{dishId:guid}", async Task<Results<NotFound, Ok<DishDTO>>>(MyDishesDbContext db, IMapper mapper, Guid dishId) =>
 {
     var dish = await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
     return dish is not null
-        ? Results.Ok(mapper.Map<DishDTO>(dish))
-        : Results.NotFound();
+        ? TypedResults.Ok(mapper.Map<DishDTO>(dish))
+        : TypedResults.NotFound();
 });
 
 app.MapGet("/dishes/{dishId}/ingredients", async (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
