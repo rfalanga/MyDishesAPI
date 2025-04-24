@@ -41,11 +41,18 @@ app.MapGet("/dishes/{dishName:string}", async (MyDishesDbContext db, IMapper map
             : Results.NotFound());  // Cannot use TypedResults here, because we don't have a DTO for the dish name.
 });
 
-app.MapGet("/dishes/{dishId}/ingredients", async (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
+app.MapGet("/dishes/{dishId}/ingredients", async Task<Results<NotFound, Ok<IEnumerable<IngredientDTO>>>>(MyDishesDbContext db, IMapper mapper, Guid dishId) =>
 {
-    return mapper.Map<IEnumerable<IngredientDTO>> ((await db.Dishes
+    var dishEntity = await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
+
+    if (dishEntity is null)
+    {
+        return TypedResults.NotFound();
+    }
+
+    return TypedResults.Ok(mapper.Map<IEnumerable<IngredientDTO>>((await db.Dishes
         .Include(d => d.Ingredients)
-        .FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients);
+        .FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients));
 });
 
 app.MapGet("/dishes/{dishId:guid}", async Task<Results<NotFound, Ok<DishDTO>>> (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
