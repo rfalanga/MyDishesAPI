@@ -33,12 +33,12 @@ app.MapGet("/dishes", async Task<Ok<IEnumerable<DishDTO>>>(MyDishesDbContext db,
         .ToListAsync()));
 });
 
-app.MapGet("/dishes/{dishId:guid}", async Task<Results<NotFound, Ok<DishDTO>>>(MyDishesDbContext db, IMapper mapper, Guid dishId) =>
+app.MapGet("/dishes/{dishName:string}", async (MyDishesDbContext db, IMapper mapper, string dishName) =>
 {
-    var dish = await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
-    return dish is not null
-        ? TypedResults.Ok(mapper.Map<DishDTO>(dish))
-        : TypedResults.NotFound();
+    return mapper.Map<DishDTO> (await db.Dishes.FirstOrDefaultAsync(d => d.Name == dishName)
+        is Dish dish
+            ? TypedResults.Ok(dish) // Can use TypedResults here, because we have a DTO for the dish name.
+            : Results.NotFound());  // Cannot use TypedResults here, because we don't have a DTO for the dish name.
 });
 
 app.MapGet("/dishes/{dishId}/ingredients", async (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
@@ -48,12 +48,12 @@ app.MapGet("/dishes/{dishId}/ingredients", async (MyDishesDbContext db, IMapper 
         .FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients);
 });
 
-app.MapGet("/dishes/{dishName:string}", async (MyDishesDbContext db, IMapper mapper, string dishName) =>
+app.MapGet("/dishes/{dishId:guid}", async Task<Results<NotFound, Ok<DishDTO>>> (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
 {
-    return mapper.Map<DishDTO> (await db.Dishes.FirstOrDefaultAsync(d => d.Name == dishName)
-        is Dish dish
-            ? TypedResults.Ok(dish) // Can use TypedResults here, because we have a DTO for the dish name.
-            : Results.NotFound());  // Cannot use TypedResults here, because we don't have a DTO for the dish name.
+    var dish = await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
+    return dish is not null
+        ? TypedResults.Ok(mapper.Map<DishDTO>(dish))
+        : TypedResults.NotFound();
 });
 
 // recreate & migrate the database on each run, for demo purposes
