@@ -65,7 +65,7 @@ app.MapGet("/dishes/{dishId:guid}", async Task<Results<NotFound, Ok<DishDTO>>> (
 
 app.MapPost("/dishes", async (MyDishesDbContext db, IMapper mapper, DishForCreationDTO dishForCreationDTO) =>
 {
-    var dishEntity = mapper.Map<DishForCreationDTO>(dishForCreationDTO);    // The dishForCreationDTO is from the body of the request
+    var dishEntity = mapper.Map<Dish>(dishForCreationDTO);    // The dishForCreationDTO is from the body of the request
     db.Add(dishEntity);
     await db.SaveChangesAsync();
 
