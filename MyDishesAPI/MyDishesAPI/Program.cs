@@ -70,7 +70,7 @@ app.MapPost("/dishes", async (MyDishesDbContext db, IMapper mapper, DishForCreat
     await db.SaveChangesAsync();
 
     var dishToReturn = mapper.Map<DishDTO>(dishEntity);
-    return TypedResults.Ok(dishToReturn);
+    return TypedResults.Created(dishToReturn);
 }); 
 
 // recreate & migrate the database on each run, for demo purposes
