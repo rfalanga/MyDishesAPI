@@ -63,7 +63,7 @@ app.MapGet("/dishes/{dishId:guid}", async Task<Results<NotFound, Ok<DishDTO>>> (
         : TypedResults.NotFound();
 }).WithName("GetDish");
 
-app.MapPost("/dishes", async Task<Created<DishDTO>> (MyDishesDbContext db, IMapper mapper, DishForCreationDTO dishForCreationDTO, LinkGenerator linkGenerator, HttpContext httpContext) =>
+app.MapPost("/dishes", async Task<CreatedAtRoute<DishDTO>> (MyDishesDbContext db, IMapper mapper, DishForCreationDTO dishForCreationDTO) =>
 {
     var dishEntity = mapper.Map<Dish>(dishForCreationDTO);    // The dishForCreationDTO is from the body of the request
     db.Add(dishEntity);
@@ -71,11 +71,17 @@ app.MapPost("/dishes", async Task<Created<DishDTO>> (MyDishesDbContext db, IMapp
 
     var dishToReturn = mapper.Map<DishDTO>(dishEntity);
 
-    // The linkGenerator is used to create the URL for the newly created dish
-    var linkToDish = linkGenerator.GetUriByName(
-        httpContext, "GetDish", new { dishId = dishToReturn.Id }
+    // Kevin wants to simply this code, so he changed it to this
+    return TypedResults.CreatedAtRoute(
+        dishToReturn, "GetDish", new { dishId = dishToReturn.Id }
         );
-    return TypedResults.Created(linkToDish, dishToReturn); // using generated link instead of hardcoded URL
+
+    // The linkGenerator is used to create the URL for the newly created dish
+    //var linkToDish = linkGenerator.GetUriByName(
+    //    httpContext, "GetDish", new { dishId = dishToReturn.Id }
+    //    );
+
+    //return TypedResults.Created(linkToDish, dishToReturn); // using generated link instead of hardcoded URL
 }); 
 
 // recreate & migrate the database on each run, for demo purposes
