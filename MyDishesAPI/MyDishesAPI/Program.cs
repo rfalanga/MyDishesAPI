@@ -70,7 +70,7 @@ app.MapPost("/dishes", async (MyDishesDbContext db, IMapper mapper, DishForCreat
     await db.SaveChangesAsync();
 
     var dishToReturn = mapper.Map<DishDTO>(dishEntity);
-    return TypedResults.Created(dishToReturn);
+    return TypedResults.Created($"https://localhost:7182/dishes/{dishToReturn}", dishToReturn); // the first and simpliest approach is to hard code the URL
 }); 
 
 // recreate & migrate the database on each run, for demo purposes
