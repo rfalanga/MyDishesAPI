@@ -106,7 +106,7 @@ app.MapDelete("/dishes/{dishId:guid}", async Task<Results<NotFound, NoContent>> 
     {
         return TypedResults.NotFound();
     }
-    db.Remove(dishEntity);
+    db.Remove(dishEntity);  // Kevin has db.Dishes.Remove(dishEntity);
     await db.SaveChangesAsync();
     return TypedResults.NoContent();
 });
