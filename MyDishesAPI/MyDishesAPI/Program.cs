@@ -106,7 +106,8 @@ app.MapDelete("/dishes/{dishId:guid}", async Task<Results<NotFound, NoContent>> 
     {
         return TypedResults.NotFound();
     }
-    db.Remove(dishEntity);  // Kevin has db.Dishes.Remove(dishEntity);
+    db.Remove(dishEntity);  // Kevin has db.Dishes.Remove(dishEntity). I don't know why not.
+    //db.Dishes.Remove(dishEntity);   // This is what Kevin had, but it still didn't work
     await db.SaveChangesAsync();
     return TypedResults.NoContent();
 });
