@@ -99,6 +99,18 @@ app.MapPut("/dishes/{dishId:guid}", async Task<Results<NotFound, NoContent>> (My
     return TypedResults.NoContent();
 });
 
+app.MapDelete("/dishes/{dishId:guid}", async Task<Results<NotFound, NoContent>> (MyDishesDbContext db, Guid dishId) =>
+{
+    var dishEntity = await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
+    if (dishEntity is null)
+    {
+        return TypedResults.NotFound();
+    }
+    db.Remove(dishEntity);
+    await db.SaveChangesAsync();
+    return TypedResults.NoContent();
+});
+
 // recreate & migrate the database on each run, for demo purposes
 using (var serviceScope = app.Services.GetService<IServiceScopeFactory>()?.CreateScope())
 {
