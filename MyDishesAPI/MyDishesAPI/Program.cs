@@ -45,7 +45,7 @@ dishesEndpoints.MapGet("/{dishName:string}", async (MyDishesDbContext db, IMappe
             : Results.NotFound());  // Cannot use TypedResults here, because we don't have a DTO for the dish name.
 });
 
-app.MapGet("/dishes/{dishId}/ingredients", async Task<Results<NotFound, Ok<IEnumerable<IngredientDTO>>>>(MyDishesDbContext db, IMapper mapper, Guid dishId) =>
+ingredientsEndpoints.MapGet("", async Task<Results<NotFound, Ok<IEnumerable<IngredientDTO>>>>(MyDishesDbContext db, IMapper mapper, Guid dishId) =>
 {
     var dishEntity = await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
 
@@ -67,7 +67,7 @@ dishWithGuidIdEndpoints.MapGet("", async Task<Results<NotFound, Ok<DishDTO>>> (M
         : TypedResults.NotFound();
 }).WithName("GetDish");
 
-app.MapPost("/dishes", async Task<CreatedAtRoute<DishDTO>> (MyDishesDbContext db, IMapper mapper, DishForCreationDTO dishForCreationDTO) =>
+dishesEndpoints.MapPost("", async Task<CreatedAtRoute<DishDTO>> (MyDishesDbContext db, IMapper mapper, DishForCreationDTO dishForCreationDTO) =>
 {
     var dishEntity = mapper.Map<Dish>(dishForCreationDTO);    // The dishForCreationDTO is from the body of the request
     db.Add(dishEntity);
@@ -88,7 +88,7 @@ app.MapPost("/dishes", async Task<CreatedAtRoute<DishDTO>> (MyDishesDbContext db
     //return TypedResults.Created(linkToDish, dishToReturn); // using generated link instead of hardcoded URL
 });
 
-app.MapPut("/dishes/{dishId:guid}", async Task<Results<NotFound, NoContent>> (MyDishesDbContext db, IMapper mapper, Guid dishId, DishForUpdateDTO dishForUpdateDTO) =>
+dishWithGuidIdEndpoints.MapPut("", async Task<Results<NotFound, NoContent>> (MyDishesDbContext db, IMapper mapper, Guid dishId, DishForUpdateDTO dishForUpdateDTO) =>
 {
     var dishEntity = await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
     if (dishEntity is null)
@@ -103,7 +103,7 @@ app.MapPut("/dishes/{dishId:guid}", async Task<Results<NotFound, NoContent>> (My
     return TypedResults.NoContent();
 });
 
-app.MapDelete("/dishes/{dishId:guid}", async Task<Results<NotFound, NoContent>> (MyDishesDbContext db, Guid dishId) =>
+dishWithGuidIdEndpoints.MapDelete("", async Task<Results<NotFound, NoContent>> (MyDishesDbContext db, Guid dishId) =>
 {
     var dishEntity = await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
     if (dishEntity is null)
