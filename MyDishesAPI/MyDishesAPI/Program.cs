@@ -28,7 +28,7 @@ var dishWithGuidIdEndpoints = dishesEndpoints.MapGroup("/dishes/{dishId:guid}");
 var ingredientsEndpoints = dishWithGuidIdEndpoints.MapGroup("/dishes/{dishId:guid}/ingredients"); // Kevin had this too
 
 // Because there is no querystring parameter with the name "name", we don't have to put FromQuery here. Removed [FromQuery].
-app.MapGet("/dishes", async Task<Ok<IEnumerable<DishDTO>>>(MyDishesDbContext db, ClaimsPrincipal claimsPrincipal, IMapper mapper, string? name) =>
+dishesEndpoints.MapGet("", async Task<Ok<IEnumerable<DishDTO>>>(MyDishesDbContext db, ClaimsPrincipal claimsPrincipal, IMapper mapper, string? name) =>
 {
     Console.WriteLine($"User: {claimsPrincipal.Identity?.IsAuthenticated}");
 
@@ -37,7 +37,7 @@ app.MapGet("/dishes", async Task<Ok<IEnumerable<DishDTO>>>(MyDishesDbContext db,
         .ToListAsync()));
 });
 
-app.MapGet("/dishes/{dishName:string}", async (MyDishesDbContext db, IMapper mapper, string dishName) =>
+dishesEndpoints.MapGet("/{dishName:string}", async (MyDishesDbContext db, IMapper mapper, string dishName) =>
 {
     return mapper.Map<DishDTO> (await db.Dishes.FirstOrDefaultAsync(d => d.Name == dishName)
         is Dish dish
@@ -59,7 +59,7 @@ app.MapGet("/dishes/{dishId}/ingredients", async Task<Results<NotFound, Ok<IEnum
         .FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients));
 });
 
-app.MapGet("/dishes/{dishId:guid}", async Task<Results<NotFound, Ok<DishDTO>>> (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
+dishWithGuidIdEndpoints.MapGet("", async Task<Results<NotFound, Ok<DishDTO>>> (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
 {
     var dish = await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
     return dish is not null
