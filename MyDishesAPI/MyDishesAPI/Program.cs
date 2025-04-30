@@ -25,6 +25,7 @@ app.UseHttpsRedirection();
 
 var dishesEndpoints = app.MapGroup("/dishes").WithTags("Dishes");   // Kevin didn't have WithTags, but I think I'll keep it for now
 var dishWithGuidIdEndpoints = dishesEndpoints.MapGroup("/dishes/{dishId:guid}"); // And this is what Kevin had
+var ingredientsEndpoints = dishWithGuidIdEndpoints.MapGroup("/dishes/{dishId:guid}/ingredients"); // Kevin had this too
 
 // Because there is no querystring parameter with the name "name", we don't have to put FromQuery here. Removed [FromQuery].
 app.MapGet("/dishes", async Task<Ok<IEnumerable<DishDTO>>>(MyDishesDbContext db, ClaimsPrincipal claimsPrincipal, IMapper mapper, string? name) =>
