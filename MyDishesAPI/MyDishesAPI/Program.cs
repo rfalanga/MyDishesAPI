@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container
 
 // register the DbContext on the container, getting the connection string from appsettings.json
 builder.Services.AddDbContext<MyDishesDbContext>(options =>
@@ -23,8 +23,12 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
+var dishesEndpoints = app.MapGroup("/dishes").WithTags("Dishes");   // Kevin didn't have WithTags, but I think I'll keep it for now
+var dishWithGuidIdEndpoints = dishesEndpoints.MapGroup("/dishes/{dishId:guid}"); // And this is what Kevin had
+var ingredientsEndpoints = dishWithGuidIdEndpoints.MapGroup("/dishes/{dishId:guid}/ingredients"); // Kevin had this too
+
 // Because there is no querystring parameter with the name "name", we don't have to put FromQuery here. Removed [FromQuery].
-app.MapGet("/dishes", async Task<Ok<IEnumerable<DishDTO>>>(MyDishesDbContext db, ClaimsPrincipal claimsPrincipal, IMapper mapper, string? name) =>
+dishesEndpoints.MapGet("", async Task<Ok<IEnumerable<DishDTO>>>(MyDishesDbContext db, ClaimsPrincipal claimsPrincipal, IMapper mapper, string? name) =>
 {
     Console.WriteLine($"User: {claimsPrincipal.Identity?.IsAuthenticated}");
 
@@ -33,7 +37,7 @@ app.MapGet("/dishes", async Task<Ok<IEnumerable<DishDTO>>>(MyDishesDbContext db,
         .ToListAsync()));
 });
 
-app.MapGet("/dishes/{dishName:string}", async (MyDishesDbContext db, IMapper mapper, string dishName) =>
+dishesEndpoints.MapGet("/{dishName:string}", async (MyDishesDbContext db, IMapper mapper, string dishName) =>
 {
     return mapper.Map<DishDTO> (await db.Dishes.FirstOrDefaultAsync(d => d.Name == dishName)
         is Dish dish
@@ -41,7 +45,7 @@ app.MapGet("/dishes/{dishName:string}", async (MyDishesDbContext db, IMapper map
             : Results.NotFound());  // Cannot use TypedResults here, because we don't have a DTO for the dish name.
 });
 
-app.MapGet("/dishes/{dishId}/ingredients", async Task<Results<NotFound, Ok<IEnumerable<IngredientDTO>>>>(MyDishesDbContext db, IMapper mapper, Guid dishId) =>
+ingredientsEndpoints.MapGet("", async Task<Results<NotFound, Ok<IEnumerable<IngredientDTO>>>>(MyDishesDbContext db, IMapper mapper, Guid dishId) =>
 {
     var dishEntity = await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
 
@@ -55,12 +59,61 @@ app.MapGet("/dishes/{dishId}/ingredients", async Task<Results<NotFound, Ok<IEnum
         .FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients));
 });
 
-app.MapGet("/dishes/{dishId:guid}", async Task<Results<NotFound, Ok<DishDTO>>> (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
+dishWithGuidIdEndpoints.MapGet("", async Task<Results<NotFound, Ok<DishDTO>>> (MyDishesDbContext db, IMapper mapper, Guid dishId) =>
 {
     var dish = await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
     return dish is not null
         ? TypedResults.Ok(mapper.Map<DishDTO>(dish))
         : TypedResults.NotFound();
+}).WithName("GetDish");
+
+dishesEndpoints.MapPost("", async Task<CreatedAtRoute<DishDTO>> (MyDishesDbContext db, IMapper mapper, DishForCreationDTO dishForCreationDTO) =>
+{
+    var dishEntity = mapper.Map<Dish>(dishForCreationDTO);    // The dishForCreationDTO is from the body of the request
+    db.Add(dishEntity);
+    await db.SaveChangesAsync();
+
+    var dishToReturn = mapper.Map<DishDTO>(dishEntity);
+
+    // Kevin wants to simply this code, so he changed it to this
+    return TypedResults.CreatedAtRoute(
+        dishToReturn, "GetDish", new { dishId = dishToReturn.Id }
+        );
+
+    // The linkGenerator is used to create the URL for the newly created dish
+    //var linkToDish = linkGenerator.GetUriByName(
+    //    httpContext, "GetDish", new { dishId = dishToReturn.Id }
+    //    );
+
+    //return TypedResults.Created(linkToDish, dishToReturn); // using generated link instead of hardcoded URL
+});
+
+dishWithGuidIdEndpoints.MapPut("", async Task<Results<NotFound, NoContent>> (MyDishesDbContext db, IMapper mapper, Guid dishId, DishForUpdateDTO dishForUpdateDTO) =>
+{
+    var dishEntity = await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
+    if (dishEntity is null)
+    {
+        return TypedResults.NotFound();
+    }
+
+    mapper.Map(dishForUpdateDTO, dishEntity);
+
+    await db.SaveChangesAsync();
+
+    return TypedResults.NoContent();
+});
+
+dishWithGuidIdEndpoints.MapDelete("", async Task<Results<NotFound, NoContent>> (MyDishesDbContext db, Guid dishId) =>
+{
+    var dishEntity = await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
+    if (dishEntity is null)
+    {
+        return TypedResults.NotFound();
+    }
+    db.Remove(dishEntity);  // Kevin has db.Dishes.Remove(dishEntity). I don't know why not.
+    //db.Dishes.Remove(dishEntity);   // This is what Kevin had, but it still didn't work
+    await db.SaveChangesAsync();
+    return TypedResults.NoContent();
 });
 
 // recreate & migrate the database on each run, for demo purposes
