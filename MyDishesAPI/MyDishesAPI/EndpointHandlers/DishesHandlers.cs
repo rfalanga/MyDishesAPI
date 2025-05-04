@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using MyDishesAPI.DbContexts;
+using MyDishesAPI.Entities;
 using MyDishesAPI.Models;
 using System.Security.Claims;
 
@@ -16,6 +17,38 @@ public static class DishesHandlers
         return TypedResults.Ok(mapper.Map<IEnumerable<DishDTO>>(await db.Dishes
             .Where(d => name == null || d.Name.Contains(name))
             .ToListAsync()));
+    }
+
+    public static async Task<Results<NotFound, Ok<DishDTO>>> GetDishByIdAsync(MyDishesDbContext db, Guid dishId, IMapper mapper)
+    {
+        var dish = await db.Dishes
+            .Include(d => d.Ingredients)
+            .FirstOrDefaultAsync(d => d.Id == dishId);
+        if (dish is null)
+        {
+            return TypedResults.NotFound();
+        }
+        return TypedResults.Ok(mapper.Map<DishDTO>(dish));
+    }
+
+    public static async Task<Results<NotFound<DishDTO>, Ok<DishDTO>>> GetDishByNameAsync(MyDishesDbContext db, string dishName, IMapper mapper)
+    {
+        var dish = await db.Dishes
+            .FirstOrDefaultAsync(d => d.Name == dishName);
+        if (dish is null)
+        {
+            return TypedResults.NotFound<DishDTO>(null); // Provide a null value to satisfy the required parameter
+        }
+        return TypedResults.Ok(mapper.Map<DishDTO>(dish));
+    }
+
+    public static async Task<CreatedAtRoute<DishDTO>> CreateDishAsync(MyDishesDbContext db, DishForCreationDTO dishForCreationDto, IMapper mapper)
+    {
+        var dishEntity = mapper.Map<Dish>(dishForCreationDto);
+        await db.Dishes.AddAsync(dishEntity);
+        await db.SaveChangesAsync();
+
+        return TypedResults.CreatedAtRoute(dishEntity.Id.ToString(), dishForCreationDto);
     }
 }
 
