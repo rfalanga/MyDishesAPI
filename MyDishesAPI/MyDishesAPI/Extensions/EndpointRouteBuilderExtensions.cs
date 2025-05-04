@@ -1,0 +1,33 @@
+﻿using MyDishesAPI.EndpointHandlers;
+using MyDishesAPI.Models;
+
+namespace MyDishesAPI.Extensions;
+
+public static class EndpointRouteBuilderExtensions
+{
+    public static void RegisterDishesEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
+    {
+        endpointRouteBuilder.MapGet("/dishes", DishesHandlers.GetDishesAsync)
+            .WithName("GetDishes")
+            .Produces<IEnumerable<DishDTO>>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized);
+        endpointRouteBuilder.MapGet("/dishes/{dishId:guid}", DishesHandlers.GetDishByIdAsync)
+            .WithName("GetDish")
+            .Produces<DishDTO>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound);
+        endpointRouteBuilder.MapGet("/dishes/name/{dishName}", DishesHandlers.GetDishByNameAsync)
+            .WithName("GetDishByName")
+            .Produces<DishDTO>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound);
+        endpointRouteBuilder.MapPost("/dishes", DishesHandlers.CreateDishAsync)
+            .WithName("CreateDish")
+            .Accepts<DishForCreationDTO>("application/json")
+            .Produces<DishDTO>(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest);
+        endpointRouteBuilder.MapPut("/dishes/{dishId:guid}", DishesHandlers.UpdateDishAsync)
+            .WithName("UpdateDish")
+            .Accepts<DishForUpdateDTO>("application/json")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound);
+    }
+}
