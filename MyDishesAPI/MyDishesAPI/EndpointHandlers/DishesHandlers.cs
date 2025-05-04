@@ -71,5 +71,19 @@ public static class DishesHandlers
         await db.SaveChangesAsync();
         return TypedResults.NoContent();
     }
+
+    public static async Task<Results<NotFound, NoContent>> DeleteDishAsync(MyDishesDbContext db, Guid dishId)
+    {
+        var dishEntity = await db.Dishes
+            .FirstOrDefaultAsync(d => d.Id == dishId);
+        if (dishEntity is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        db.Dishes.Remove(dishEntity);
+        await db.SaveChangesAsync();
+        return TypedResults.NoContent();
+    }
 }
 
