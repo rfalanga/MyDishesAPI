@@ -48,7 +48,12 @@ public static class DishesHandlers
         await db.Dishes.AddAsync(dishEntity);
         await db.SaveChangesAsync();
 
-        return TypedResults.CreatedAtRoute(dishEntity.Id.ToString(), dishForCreationDto);
+        var dishToReturn = mapper.Map<DishDTO>(dishEntity);
+
+        return TypedResults.CreatedAtRoute(
+            dishToReturn.Id.ToString(),
+            dishToReturn,
+            routeValues: new { id = dishToReturn.Id });
     }
 }
 
