@@ -51,9 +51,10 @@ public static class DishesHandlers
         var dishToReturn = mapper.Map<DishDTO>(dishEntity);
 
         return TypedResults.CreatedAtRoute(
-            dishToReturn.Id.ToString(),
-            dishToReturn,
-            routeValues: new { id = dishToReturn.Id });
+            routeName: "GetDish", // Specify the route name if applicable
+            routeValues: new { id = dishToReturn.Id }, // Correctly pass route values
+            value: dishToReturn // Pass the DishDTO as the value
+        );
     }
 }
 
