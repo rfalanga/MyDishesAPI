@@ -56,5 +56,20 @@ public static class DishesHandlers
             value: dishToReturn // Pass the DishDTO as the value
         );
     }
+
+    public static async Task<Results<NotFound, NoContent>> UpdateDishAsync(MyDishesDbContext db, Guid dishId, DishForUpdateDTO dishForUpdateDto)
+    {
+        var dishEntity = await db.Dishes
+            .FirstOrDefaultAsync(d => d.Id == dishId);
+        if (dishEntity is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        dishEntity.Name = dishForUpdateDto.Name;
+        // Kevin had mapper.Map(dishForUpdateDto, dishEntity) here, however GH's Copilot didn't include mapper, so I'm leaving it out
+        await db.SaveChangesAsync();
+        return TypedResults.NoContent();
+    }
 }
 
