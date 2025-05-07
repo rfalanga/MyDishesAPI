@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using MyDishesAPI.DbContexts;
-using MyDishesAPI.Entities;
 using MyDishesAPI.Models;
 
 namespace MyDishesAPI.EndpointHandlers;
