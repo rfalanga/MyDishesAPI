@@ -62,5 +62,11 @@ public static class EndpointRouteBuilderExtensions
         //    .WithName("GetIngredients")
         //    .Produces<IEnumerable<IngredientDTO>>(StatusCodes.Status200OK)
         //    .Produces(StatusCodes.Status401Unauthorized);
+
+        // Kevin is adding this code to illustrate handling exceptions with the Developer Exception Page Middleware.
+        ingredientsEndpoints.MapPost("", () =>
+        {
+            throw new Exception("This is a test exception for the Developer Exception Page Middleware.");
+        });
     }
 }
