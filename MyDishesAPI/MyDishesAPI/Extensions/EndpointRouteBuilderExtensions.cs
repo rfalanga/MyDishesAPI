@@ -33,7 +33,7 @@ public static class EndpointRouteBuilderExtensions
 
     public static void RegisterIngredientsEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
-        endpointRouteBuilder.MapGet("/ingredients", IngredientsHandlers.GetIngredientsAsync)
+        endpointRouteBuilder.MapGet("/ingredients", IngredientsHandlers.GetIngredientByIdAsync)
             .WithName("GetIngredients")
             .Produces<IEnumerable<IngredientDTO>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized);
