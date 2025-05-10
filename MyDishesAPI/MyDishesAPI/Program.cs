@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyDishesAPI.DbContexts;
 using MyDishesAPI.Entities;
+using MyDishesAPI.Extensions;
 using MyDishesAPI.Models;
 using System.Security.Claims;
 
@@ -115,6 +116,9 @@ app.UseHttpsRedirection();
 //    await db.SaveChangesAsync();
 //    return TypedResults.NoContent();
 //});
+
+app.RegisterDishesEndpoints(); 
+app.RegisterIngredientsEndpoints(); 
 
 // recreate & migrate the database on each run, for demo purposes
 using (var serviceScope = app.Services.GetService<IServiceScopeFactory>()?.CreateScope())
