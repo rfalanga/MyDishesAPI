@@ -41,15 +41,15 @@ public static class EndpointRouteBuilderExtensions
             .WithName("GetIngredient")
             .Produces<IngredientDTO>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
-        endpointRouteBuilder.MapPost("/ingredients", IngredientsHandlers.CreateIngredientAsync)
-            .WithName("CreateIngredient")
-            .Accepts<IngredientForCreationDTO>("application/json")
-            .Produces<IngredientDTO>(StatusCodes.Status201Created)
-            .Produces(StatusCodes.Status400BadRequest);
-        endpointRouteBuilder.MapPut("/ingredients/{ingredientId:guid}", IngredientsHandlers.UpdateIngredientAsync)
-            .WithName("UpdateIngredient")
-            .Accepts<IngredientForUpdateDTO>("application/json")
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound);
+        //endpointRouteBuilder.MapPost("/ingredients", IngredientsHandlers.CreateIngredientAsync)
+        //    .WithName("CreateIngredient")
+        //    .Accepts<IngredientForCreationDTO>("application/json")
+        //    .Produces<IngredientDTO>(StatusCodes.Status201Created)
+        //    .Produces(StatusCodes.Status400BadRequest);
+        //endpointRouteBuilder.MapPut("/ingredients/{ingredientId:guid}", IngredientsHandlers.UpdateIngredientAsync)
+        //    .WithName("UpdateIngredient")
+        //    .Accepts<IngredientForUpdateDTO>("application/json")
+        //    .Produces(StatusCodes.Status204NoContent)
+        //    .Produces(StatusCodes.Status404NotFound);
     }
 }
