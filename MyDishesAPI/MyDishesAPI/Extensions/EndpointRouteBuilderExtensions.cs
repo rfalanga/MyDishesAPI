@@ -65,6 +65,7 @@ public static class EndpointRouteBuilderExtensions
 
         // Kevin is adding this code to illustrate handling exceptions with the Developer Exception Page Middleware.
         var ingredientsEndpoints = endpointRouteBuilder.MapGroup("/dishes/{dishId:guid}/ingredients");
+
         ingredientsEndpoints.MapGet("", IngredientsHandlers.GetIngredientByIdAsync)
             .WithName("GetIngredients")
             .Produces<IEnumerable<IngredientDTO>>(StatusCodes.Status200OK)
