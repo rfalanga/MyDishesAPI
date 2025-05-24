@@ -10,9 +10,11 @@ namespace MyDishesAPI.EndpointHandlers;
 
 public static class DishesHandlers
 {
-    public static async Task<Ok<IEnumerable<DishDTO>>> GetDishesAsync(MyDishesDbContext db, ClaimsPrincipal claimsPrincipal, IMapper mapper, string? name)
+    public static async Task<Ok<IEnumerable<DishDTO>>> GetDishesAsync(MyDishesDbContext db, ClaimsPrincipal claimsPrincipal, IMapper mapper, ILogger<DishDTO> logger, string? name)
     {
         Console.WriteLine($"User: {claimsPrincipal.Identity?.IsAuthenticated}");
+
+        logger.LogInformation("Getting the dishes ...");
 
         return TypedResults.Ok(mapper.Map<IEnumerable<DishDTO>>(await db.Dishes
             .Where(d => name == null || d.Name.Contains(name))
