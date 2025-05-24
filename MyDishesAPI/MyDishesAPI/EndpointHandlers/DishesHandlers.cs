@@ -46,7 +46,7 @@ public static class DishesHandlers
     {
         var dishEntity = mapper.Map<Dish>(dishForCreationDto);
         await db.Dishes.AddAsync(dishEntity);
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync();    // This raises an inner exception of SqliteException: SQLite Error 1: 'no such table: Dishes'.
 
         var dishToReturn = mapper.Map<DishDTO>(dishEntity);
 

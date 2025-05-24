@@ -18,22 +18,25 @@ builder.Services.AddDbContext<MyDishesDbContext>(options =>
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.AddProblemDetails(); // This is for the exception handler
+
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler(configureApplicationBuilder =>
-    {
-        configureApplicationBuilder.Run(async context =>
-        {
-            context.Response.StatusCode = StatusCodes.Status500InternalServerError; // Kevin had context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            context.Response.ContentType = "text/html";  // GH Copilot had "application/json"
-            await context.Response.WriteAsync("An unexpected error occurred. Please try again later.");
-        });
-    });
+    app.UseExceptionHandler();
+    //app.UseExceptionHandler(configureApplicationBuilder =>
+    //{
+    //    configureApplicationBuilder.Run(async context =>
+    //    {
+    //        context.Response.StatusCode = StatusCodes.Status500InternalServerError; // Kevin had context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+    //        context.Response.ContentType = "text/html";  // GH Copilot had "application/json"
+    //        await context.Response.WriteAsync("An unexpected error occurred. Please try again later.");
+    //    });
+    //});
 }
 
-// Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
 
