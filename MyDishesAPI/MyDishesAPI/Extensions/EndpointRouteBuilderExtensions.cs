@@ -41,7 +41,7 @@ public static class EndpointRouteBuilderExtensions
             .Produces<IEnumerable<IngredientDTO>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized);
         endpointRouteBuilder.MapGet("/ingredients/{ingredientId:guid}", IngredientsHandlers.GetIngredientByIdAsync)
-            .WithName("GetIngredient")
+            .WithName("GetIngredientById")  // Changed from "GetIngredients" to "GetIngredientById" for clarity
             .Produces<IngredientDTO>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
         //endpointRouteBuilder.MapPost("/ingredients", IngredientsHandlers.CreateIngredientAsync)
