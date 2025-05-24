@@ -18,7 +18,7 @@ public static class DishesHandlers
 
         return TypedResults.Ok(mapper.Map<IEnumerable<DishDTO>>(await db.Dishes
             .Where(d => name == null || d.Name.Contains(name))
-            .ToListAsync()));
+            .ToListAsync()));   // TODO: Getting An exception of type 'Microsoft.Data.Sqlite.SqliteException' occurred in System.Private.CoreLib.dll but was not handled in user code SQLite Error 1: 'no such table: Dishes'
     }
 
     public static async Task<Results<NotFound, Ok<DishDTO>>> GetDishByIdAsync(MyDishesDbContext db, Guid dishId, IMapper mapper)
