@@ -20,15 +20,18 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
-app.UseExceptionHandler(configureApplicationBuilder =>
+if (!app.Environment.IsDevelopment())
 {
-    configureApplicationBuilder.Run(async context =>
+    app.UseExceptionHandler(configureApplicationBuilder =>
     {
-        context.Response.StatusCode = StatusCodes.Status500InternalServerError; // Kevin had context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-        context.Response.ContentType = "text/html";  // GH Copilot had "application/json"
-        await context.Response.WriteAsync("An unexpected error occurred. Please try again later.");
+        configureApplicationBuilder.Run(async context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError; // Kevin had context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            context.Response.ContentType = "text/html";  // GH Copilot had "application/json"
+            await context.Response.WriteAsync("An unexpected error occurred. Please try again later.");
+        });
     });
-});
+}
 
 // Configure the HTTP request pipeline.
 
