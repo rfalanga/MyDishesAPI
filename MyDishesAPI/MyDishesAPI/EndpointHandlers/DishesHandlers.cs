@@ -10,13 +10,15 @@ namespace MyDishesAPI.EndpointHandlers;
 
 public static class DishesHandlers
 {
-    public static async Task<Ok<IEnumerable<DishDTO>>> GetDishesAsync(MyDishesDbContext db, ClaimsPrincipal claimsPrincipal, IMapper mapper, string? name)
+    public static async Task<Ok<IEnumerable<DishDTO>>> GetDishesAsync(MyDishesDbContext db, ClaimsPrincipal claimsPrincipal, IMapper mapper, ILogger<DishDTO> logger, string? name)
     {
         Console.WriteLine($"User: {claimsPrincipal.Identity?.IsAuthenticated}");
 
+        logger.LogInformation("Getting the dishes ...");
+
         return TypedResults.Ok(mapper.Map<IEnumerable<DishDTO>>(await db.Dishes
             .Where(d => name == null || d.Name.Contains(name))
-            .ToListAsync()));
+            .ToListAsync()));   // TODO: Getting An exception of type 'Microsoft.Data.Sqlite.SqliteException' occurred in System.Private.CoreLib.dll but was not handled in user code SQLite Error 1: 'no such table: Dishes'
     }
 
     public static async Task<Results<NotFound, Ok<DishDTO>>> GetDishByIdAsync(MyDishesDbContext db, Guid dishId, IMapper mapper)
@@ -46,7 +48,7 @@ public static class DishesHandlers
     {
         var dishEntity = mapper.Map<Dish>(dishForCreationDto);
         await db.Dishes.AddAsync(dishEntity);
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync();    // This raises an inner exception of SqliteException: SQLite Error 1: 'no such table: Dishes'.
 
         var dishToReturn = mapper.Map<DishDTO>(dishEntity);
 
