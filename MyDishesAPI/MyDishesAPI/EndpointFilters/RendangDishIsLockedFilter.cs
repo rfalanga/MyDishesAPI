@@ -4,8 +4,20 @@ public class RendangDishIsLockedFilter : IEndpointFilter
 {
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
-        var dishId = context.GetArgument<Guid>(2);  // This is just one way of getting the argument from the context.
-        var rendangId = new Guid("f7a5c8d7-6b2e-4d3e-b6f2-4c1b8f9f6a2b"); // Example dish ID for Rendang, which is different from the one in Kevin's code.
+        Guid dishId;
+        if (context.HttpContext.Request.Method == "Put")
+        {
+            dishId = context.GetArgument<Guid>(2);
+        }
+        else if (context.HttpContext.Request.Method == "Delete")
+        {
+            dishId = context.GetArgument<Guid>(1);
+        }
+        else
+        {
+            throw new NotSupportedException($"Method {context.HttpContext.Request.Method} is not supported by this filter.");
+        }
+        var rendangId = new Guid("b0c8f1d2-3e4f-5a6b-7c8d-9e0f1a2b3c4d"); // Example Rendang dish ID, not the same value as Kevin's code had
 
         if (dishId == rendangId)
         {
