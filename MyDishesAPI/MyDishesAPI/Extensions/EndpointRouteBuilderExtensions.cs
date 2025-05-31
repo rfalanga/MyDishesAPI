@@ -51,6 +51,7 @@ public static class EndpointRouteBuilderExtensions
 
                 // invoke the next filter in the pipeline
                 var result = await next.Invoke(context);
+                return TypedResults.Ok(result); // I added this line to ensure a result is returned with a TypedResults.Ok
             });
         endpointRouteBuilder.MapDelete("", DishesHandlers.DeleteDishAsync);    // from Kevin's code
     }
