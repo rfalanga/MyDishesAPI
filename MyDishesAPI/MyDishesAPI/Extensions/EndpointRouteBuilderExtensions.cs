@@ -31,9 +31,9 @@ public static class EndpointRouteBuilderExtensions
             .Accepts<DishForUpdateDTO>("application/json")
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound)
-            .AddEndpointFilter<RendangDishIsLockedFilter>();
+            .AddEndpointFilter<DishIsLockedFilter>();
         endpointRouteBuilder.MapDelete("", DishesHandlers.DeleteDishAsync)
-            .AddEndpointFilter<RendangDishIsLockedFilter>();    // from Kevin's code
+            .AddEndpointFilter<DishIsLockedFilter>();    // from Kevin's code
     }
 
     public static void RegisterIngredientsEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)

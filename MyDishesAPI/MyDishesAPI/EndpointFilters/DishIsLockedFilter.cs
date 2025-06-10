@@ -1,7 +1,14 @@
 ﻿namespace MyDishesAPI.EndpointFilters;
 
-public class RendangDishIsLockedFilter : IEndpointFilter
+public class DishIsLockedFilter : IEndpointFilter
 {
+    private readonly Guid _lockedDishId;
+
+    public DishIsLockedFilter(Guid lockedDishId)
+    {
+        _lockedDishId = lockedDishId;
+    }
+
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         Guid dishId;
@@ -17,19 +24,14 @@ public class RendangDishIsLockedFilter : IEndpointFilter
         {
             throw new NotSupportedException($"Method {context.HttpContext.Request.Method} is not supported by this filter.");
         }
-        var rendangId = new Guid("b0c8f1d2-3e4f-5a6b-7c8d-9e0f1a2b3c4d"); // Example Rendang dish ID, not the same value as Kevin's code had
 
-        if (dishId == rendangId)
+        if (dishId == _lockedDishId)
         {
-            // Simulate a validation error for Rendang dish ID using Kevin's code
-            //context.Response.StatusCode = StatusCodes.Status400BadRequest;
-            //await context.Response.WriteAsync("Rendang dish cannot be updated.");
-            //return; // Short-circuit the pipeline
             return TypedResults.Problem(new()
             {
                 Status = StatusCodes.Status400BadRequest,
                 Title = "Dish is perfect and cannot be changed.",
-                Detail = "Rendang dish is already perfect and cannot be updated."
+                Detail = "You cannot update or delete perfection."
             });
         }
 
