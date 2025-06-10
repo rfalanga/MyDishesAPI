@@ -27,13 +27,11 @@ public static class EndpointRouteBuilderExtensions
             .Produces<DishDTO>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest);
         endpointRouteBuilder.MapPut("/dishes/{dishId:guid}", DishesHandlers.UpdateDishAsync)
-            .WithName("UpdateDish")
-            .Accepts<DishForUpdateDTO>("application/json")
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound)
-            .AddEndpointFilter<DishIsLockedFilter>();
+            .AddEndpointFilter(new DishIsLockedFilter(new Guid("fd630a57-2352-4731-b25c-db9cc7601b16"))) // from Kevin's code, blocking 2 dishes
+            .AddEndpointFilter(new DishIsLockedFilter(new Guid("eacc5169-b2a7-41ad-92c3-dbb1a5e7af06"))); // from Kevin's code, blocking 2 dishes
         endpointRouteBuilder.MapDelete("", DishesHandlers.DeleteDishAsync)
-            .AddEndpointFilter<DishIsLockedFilter>();    // from Kevin's code
+            .AddEndpointFilter(new DishIsLockedFilter(new Guid("fd630a57-2352-4731-b25c-db9cc7601b16"))) // from Kevin's code, blocking 2 dishes
+            .AddEndpointFilter(new DishIsLockedFilter(new Guid("eacc5169-b2a7-41ad-92c3-dbb1a5e7af06"))); // from Kevin's code, blocking 2 dishes
     }
 
     public static void RegisterIngredientsEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
