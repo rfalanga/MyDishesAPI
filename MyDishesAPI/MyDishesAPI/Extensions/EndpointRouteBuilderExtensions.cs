@@ -30,7 +30,7 @@ public static class EndpointRouteBuilderExtensions
             .Produces<DishDTO>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
         dishWithGuidIdEndpoints.MapPut("", DishesHandlers.UpdateDishAsync);
-        dishWithGuidIdEndpoints.MapDelete("", DishesHandlers.DeleteDishAsync);
+        dishWithGuidIdEndpoints.MapDelete("", DishesHandlers.DeleteDishAsync).AddEndpointFilter<LogNotFoundResponseFilter>();
 
     }
 
