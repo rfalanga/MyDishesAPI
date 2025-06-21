@@ -12,7 +12,7 @@ public class ValidateAnnotationsFilter : IEndpointFilter
         if (!MiniValidator.TryValidate(dishForCreationDTO, out var validationErrors))
         {
             // If validation fails, return a BadRequest with the validation validationErrors
-            return ValueTask.FromResult<object?>(TypedResults.ValidationProblem(validationErrors));
+            return TypedResults.ValidationProblem(validationErrors);
         }
     }
 }
