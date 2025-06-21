@@ -14,5 +14,7 @@ public class ValidateAnnotationsFilter : IEndpointFilter
             // If validation fails, return a BadRequest with the validation validationErrors
             return TypedResults.ValidationProblem(validationErrors);
         }
+
+        return await next(context);
     }
 }
