@@ -5,7 +5,7 @@ namespace MyDishesAPI.EndpointFilters;
 
 public class ValidateAnnotationsFilter : IEndpointFilter
 {
-    public ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+    public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         var dishForCreationDTO = context.GetArgument<DishForCreationDTO>(2);
 
