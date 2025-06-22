@@ -29,8 +29,11 @@ public static class EndpointRouteBuilderExtensions
             .WithName("GetDishByName")
             .Produces<DishDTO>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
+        dishesEndpoints.MapPost("", DishesHandlers.CreateDishAsync)
+            .AddEndpointFilter<ValidateAnnotationsFilter>(); // This is what Kevin had in his code.
         dishWithGuidIdEndpoints.MapPut("", DishesHandlers.UpdateDishAsync);
-        dishWithGuidIdEndpoints.MapDelete("", DishesHandlers.DeleteDishAsync).AddEndpointFilter<LogNotFoundResponseFilter>();
+        dishWithGuidIdEndpoints.MapDelete("", DishesHandlers.DeleteDishAsync)
+            .AddEndpointFilter<LogNotFoundResponseFilter>();
 
     }
 
