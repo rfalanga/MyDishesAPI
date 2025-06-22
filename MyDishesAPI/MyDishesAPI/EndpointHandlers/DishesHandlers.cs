@@ -18,7 +18,7 @@ public static class DishesHandlers
 
         return TypedResults.Ok(mapper.Map<IEnumerable<DishDTO>>(await db.Dishes
             .Where(d => name == null || d.Name.Contains(name))
-            .ToListAsync()));   // TODO: Getting An exception of type 'Microsoft.Data.Sqlite.SqliteException' occurred in System.Private.CoreLib.dll but was not handled in user code SQLite Error 1: 'no such table: Dishes'
+            .ToListAsync()));   // TODO: Getting An exception of type 'Microsoft.Data.Sqlite.SqliteException' occurred in System.Private.CoreLib.dll but was not handled in user code SQLite Error 1: 'no such table: Dishes'.
     }
 
     public static async Task<Results<NotFound, Ok<DishDTO>>> GetDishByIdAsync(MyDishesDbContext db, Guid dishId, IMapper mapper)
@@ -59,7 +59,7 @@ public static class DishesHandlers
         );
     }
 
-    public static async Task<Results<NotFound, NoContent>> UpdateDishAsync(MyDishesDbContext db, Guid dishId, DishForUpdateDTO dishForUpdateDto)
+    public static async Task<Results<NotFound, NoContent>> UpdateDishAsync(MyDishesDbContext db, IMapper mapper, Guid dishId, DishForUpdateDTO dishForUpdateDTO)
     {
         var dishEntity = await db.Dishes
             .FirstOrDefaultAsync(d => d.Id == dishId);
@@ -68,8 +68,8 @@ public static class DishesHandlers
             return TypedResults.NotFound();
         }
 
-        dishEntity.Name = dishForUpdateDto.Name;
-        // Kevin had mapper.Map(dishForUpdateDto, dishEntity) here, however GH's Copilot didn't include mapper, so I'm leaving it out
+        //dishEntity.Name = dishForUpdateDto.Name;    // I'm putting back in the line that Kevin had for mapper
+        mapper.Map(dishForUpdateDTO, dishEntity);
         await db.SaveChangesAsync();
         return TypedResults.NoContent();
     }
