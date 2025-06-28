@@ -9,10 +9,12 @@ public static class EndpointRouteBuilderExtensions
     public static void RegisterDishesEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
         // Create a MapGroup for dishes endpoints
-        var dishesEndpoints = endpointRouteBuilder.MapGroup("/dishes");
+        var dishesEndpoints = endpointRouteBuilder.MapGroup("/dishes")
+            .RequireAuthorization(); // This is what Kevin had in his code.
         var dishWithGuidIdEndpoints = dishesEndpoints.MapGroup("/{dishId:guid}");
         var dishWithGuidEndpointsAndLockFilters = 
             endpointRouteBuilder.MapGroup("/dishes/{dishId:guid}")
+                .RequireAuthorization() // This is what Kevin had in his code.
                 .AddEndpointFilter(new DishIsLockedFilter(new Guid("fd630a57-2352-4731-b25c-db9cc7601b16"))) // from Kevin's code, blocking 2 dishes
                 .AddEndpointFilter(new DishIsLockedFilter(new Guid("eacc5169-b2a7-41ad-92c3-dbb1a5e7af06"))); // from Kevin's code, blocking 2 dishes
 
@@ -26,6 +28,7 @@ public static class EndpointRouteBuilderExtensions
             .Produces<DishDTO>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
         dishesEndpoints.MapGet("/{dishName}", DishesHandlers.GetDishByNameAsync)
+            .AllowAnonymous() // Kevin had this as an anonymous endpoint
             .WithName("GetDishByName")
             .Produces<DishDTO>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
@@ -48,27 +51,10 @@ public static class EndpointRouteBuilderExtensions
             .WithName("GetIngredientById")
             .Produces<IngredientDTO>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
-        //endpointRouteBuilder.MapPost("/ingredients", IngredientsHandlers.CreateIngredientAsync)
-        //    .WithName("CreateIngredient")
-        //    .Accepts<IngredientForCreationDTO>("application/json")
-        //    .Produces<IngredientDTO>(StatusCodes.Status201Created)
-        //    .Produces(StatusCodes.Status400BadRequest);
-        //endpointRouteBuilder.MapPut("/ingredients/{ingredientId:guid}", IngredientsHandlers.UpdateIngredientAsync)
-        //    .WithName("UpdateIngredient")
-        //    .Accepts<IngredientForUpdateDTO>("application/json")
-        //    .Produces(StatusCodes.Status204NoContent)
-        //    .Produces(StatusCodes.Status404NotFound);
-
-        // This is what Kevin had in his code.
-        //var ingredientsEndpoints = endpointRouteBuilder.MapGroup("/dishes/{dishId:guid}/ingredients");
-
-        //ingredientsEndpoints.MapGet("", IngredientsHandlers.GetIngredientByIdAsync)
-        //    .WithName("GetIngredients")
-        //    .Produces<IEnumerable<IngredientDTO>>(StatusCodes.Status200OK)
-        //    .Produces(StatusCodes.Status401Unauthorized);
 
         // Kevin is adding this code to illustrate handling exceptions with the Developer Exception Page Middleware.
-        var ingredientsEndpoints = endpointRouteBuilder.MapGroup("/dishes/{dishId:guid}/ingredients");
+        var ingredientsEndpoints = endpointRouteBuilder.MapGroup("/dishes/{dishId:guid}/ingredients")
+            .RequireAuthorization();
 
         ingredientsEndpoints.MapGet("", IngredientsHandlers.GetIngredientByIdAsync)
             .WithName("GetDishIngredients")  // Changed from "GetIngredients" to avoid duplication
