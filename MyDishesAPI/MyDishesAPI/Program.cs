@@ -20,6 +20,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddProblemDetails(); // This is for the exception handler
 
+builder.Services.AddAuthentication().AddBearerToken();  // Kevin had AddJwtBearer, but when I tried that, it didn't work. Either I am misssing an assembly reference, or I need to add a package reference to Microsoft.AspNetCore.Authentication.JwtBearer. I don't know which one it is, so I am using AddBearerToken instead.
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
