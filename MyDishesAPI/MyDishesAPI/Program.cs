@@ -21,6 +21,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddProblemDetails(); // This is for the exception handler
 
 builder.Services.AddAuthentication().AddJwtBearer();
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
