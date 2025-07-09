@@ -12,9 +12,9 @@ public static class EndpointRouteBuilderExtensions
         var dishesEndpoints = endpointRouteBuilder.MapGroup("/dishes")
             .RequireAuthorization(); // This is what Kevin had in his code.
         var dishWithGuidIdEndpoints = dishesEndpoints.MapGroup("/{dishId:guid}");
-        var dishWithGuidEndpointsAndLockFilters = 
+        var dishWithGuidIdEndpointsAndLockFilters =                 // Renamed this variable to what Kevin named it in his code.
             endpointRouteBuilder.MapGroup("/dishes/{dishId:guid}")
-                .RequireAuthorization() // This is what Kevin had in his code.
+                .RequireAuthorization("RequireAdminFromBelgium") // This is what Kevin had in his code.
                 .AddEndpointFilter(new DishIsLockedFilter(new Guid("fd630a57-2352-4731-b25c-db9cc7601b16"))) // from Kevin's code, blocking 2 dishes
                 .AddEndpointFilter(new DishIsLockedFilter(new Guid("eacc5169-b2a7-41ad-92c3-dbb1a5e7af06"))); // from Kevin's code, blocking 2 dishes
 
@@ -33,6 +33,7 @@ public static class EndpointRouteBuilderExtensions
             .Produces<DishDTO>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
         dishesEndpoints.MapPost("", DishesHandlers.CreateDishAsync)
+            .RequireAuthorization("RequireAdminFromBelgium") // This is what Kevin had in his code.
             .AddEndpointFilter<ValidateAnnotationsFilter>(); // This is what Kevin had in his code.
         dishWithGuidIdEndpoints.MapPut("", DishesHandlers.UpdateDishAsync);
         dishWithGuidIdEndpoints.MapDelete("", DishesHandlers.DeleteDishAsync)
