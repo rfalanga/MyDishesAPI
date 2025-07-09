@@ -27,7 +27,7 @@ builder.Services.AddAuthorizationBuilder()  // Kevin entered this code to add po
     .AddPolicy("RequireAdminFromBelgium",
         policy => policy
         .RequireRole("Admin")
-        .RequireClaim(ClaimTypes.Country, "Belgium"));
+        .RequireClaim(ClaimTypes.Country, "Belgium"));  // Note: Kevin had this for this line: .RequireClaim("country", "Belgium");
 
 var app = builder.Build();
 
