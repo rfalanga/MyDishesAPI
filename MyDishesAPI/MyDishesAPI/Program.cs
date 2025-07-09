@@ -23,6 +23,14 @@ builder.Services.AddProblemDetails(); // This is for the exception handler
 builder.Services.AddAuthentication().AddJwtBearer();
 builder.Services.AddAuthorization();
 
+builder.Services.AddAuthorizationBuilder()  // Kevin entered this code to add policies
+    .AddPolicy("MustBeAdministrator", policy =>                         // GH Copilot generated this code
+        policy.RequireClaim(ClaimTypes.Role, "Administrator"))      // GH Copilot generated this code
+    .AddPolicy("MustBeUser", policy =>                                  // GH Copilot generated this code
+        policy.RequireClaim(ClaimTypes.Role, "User"))               // GH Copilot generated this code
+    .AddPolicy("MustBeAuthenticated", policy =>                         // GH Copilot generated this code
+        policy.RequireAuthenticatedUser());                                 // GH Copilot generated this code
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
