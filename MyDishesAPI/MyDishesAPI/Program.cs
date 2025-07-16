@@ -29,6 +29,9 @@ builder.Services.AddAuthorizationBuilder()  // Kevin entered this code to add po
         .RequireRole("Admin")
         .RequireClaim(ClaimTypes.Country, "Belgium"));  // Note: Kevin had this for this line: .RequireClaim("country", "Belgium");
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(); // This is for Swagger UI
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
