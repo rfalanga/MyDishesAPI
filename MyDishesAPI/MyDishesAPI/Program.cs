@@ -29,7 +29,7 @@ builder.Services.AddAuthorizationBuilder()  // Kevin entered this code to add po
         .RequireRole("Admin")
         .RequireClaim(ClaimTypes.Country, "Belgium"));  // Note: Kevin had this for this line: .RequireClaim("country", "Belgium");
 
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddEndpointsApiExplorer(); // This is for the OpenAPI/Swagger documentation
 builder.Services.AddSwaggerGen(); // This is for Swagger UI
 
 var app = builder.Build();
@@ -51,6 +51,14 @@ if (!app.Environment.IsDevelopment())
 
 
 app.UseHttpsRedirection();
+
+// The next two lines are for the OpenAPI/Swagger documentation. Kevin only had app.UseSwaggerUI(); GH Copilot added the rest. If I have any problems with Swagger, I will comment out those additional lines..
+app.UseSwagger(); // This is for the OpenAPI/Swagger documentation
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Dishes API V1");
+    c.RoutePrefix = string.Empty; // This makes Swagger UI available at the app's root
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
