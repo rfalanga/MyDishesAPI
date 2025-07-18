@@ -40,7 +40,8 @@ public static class EndpointRouteBuilderExtensions
         dishesEndpoints.MapPost("", DishesHandlers.CreateDishAsync)
             .RequireAuthorization("RequireAdminFromBelgium") // This is what Kevin had in his code.
             .AddEndpointFilter<ValidateAnnotationsFilter>() // This is what Kevin had in his code.
-            .ProducesValidationProblem(StatusCodes.Status400BadRequest);
+            .ProducesValidationProblem(StatusCodes.Status400BadRequest)
+            .Accepts<DishForCreationDTO>("application/json", "application/vnd.marvin.dishfor creation+json");
         dishWithGuidIdEndpoints.MapPut("", DishesHandlers.UpdateDishAsync);
         dishWithGuidIdEndpoints.MapDelete("", DishesHandlers.DeleteDishAsync)
             .AddEndpointFilter<LogNotFoundResponseFilter>();
