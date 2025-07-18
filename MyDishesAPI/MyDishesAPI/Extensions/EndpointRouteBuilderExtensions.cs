@@ -25,6 +25,7 @@ public static class EndpointRouteBuilderExtensions
             .Produces(StatusCodes.Status401Unauthorized);
         dishWithGuidIdEndpoints.MapGet("", DishesHandlers.GetDishByIdAsync)
             .WithName("GetDish")
+            .WithOpenApi()
             .WithSummary("Get a dish by providing an id")
             .WithDescription("Dishes are identified by a URI containing a dish " +
             "identifier. This identifier is a GUID. You can get one specified " +
