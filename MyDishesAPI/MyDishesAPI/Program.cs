@@ -1,11 +1,6 @@
-using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyDishesAPI.DbContexts;
-using MyDishesAPI.Entities;
 using MyDishesAPI.Extensions;
-using MyDishesAPI.Models;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,7 +25,10 @@ builder.Services.AddAuthorizationBuilder()  // Kevin entered this code to add po
         .RequireClaim(ClaimTypes.Country, "Belgium"));  // Note: Kevin had this for this line: .RequireClaim("country", "Belgium");
 
 builder.Services.AddEndpointsApiExplorer(); // This is for the OpenAPI/Swagger documentation
-builder.Services.AddSwaggerGen(); // This is for Swagger UI
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("TokenAuthNZ", new Microsoft.OpenApi.Models.OpenApiSecurityScheme());
+}); // This is for Swagger UI
 
 var app = builder.Build();
 
