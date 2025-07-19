@@ -39,7 +39,7 @@ builder.Services.AddSwaggerGen(options =>
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecurityScheme
+            new ()
             {
                 Reference = new OpenApiReference
                 {
@@ -47,7 +47,7 @@ builder.Services.AddSwaggerGen(options =>
                     Id = "TokenAuthNZ"
                 }
             },
-            new string[] {}
+            new List<string>() // This is an empty list, meaning that no specific scopes are required for this security scheme
         }
     });
 }); // This is for Swagger UI
