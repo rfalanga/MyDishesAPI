@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using MyDishesAPI.DbContexts;
 using MyDishesAPI.Extensions;
 using System.Security.Claims;
@@ -27,7 +28,14 @@ builder.Services.AddAuthorizationBuilder()  // Kevin entered this code to add po
 builder.Services.AddEndpointsApiExplorer(); // This is for the OpenAPI/Swagger documentation
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition("TokenAuthNZ", new Microsoft.OpenApi.Models.OpenApiSecurityScheme());
+    options.AddSecurityDefinition("TokenAuthNZ", new()
+    {
+        Name = "Authorization", // this is the name of the header that will contain the token
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        Description = "Token-based authentication and authorization"
+    });
 }); // This is for Swagger UI
 
 var app = builder.Build();
