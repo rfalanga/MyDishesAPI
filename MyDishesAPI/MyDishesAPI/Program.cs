@@ -36,6 +36,20 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "Bearer",
         Description = "Token-based authentication and authorization"
     });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "TokenAuthNZ"
+                }
+            },
+            new string[] {}
+        }
+    });
 }); // This is for Swagger UI
 
 var app = builder.Build();
